@@ -92,13 +92,13 @@
       if(in_array($Message,$moneyarray)){
 
 
-     $sql="select count(*) as total from commands where id='".$ChatId ."'";
+   $sql="select count(*) as total from commands where id='".$ChatId ."'";
       
-    $result=$conn->query($sql);
-    $data=$result->fetch_assoc();
-    $has=$data['total'];
+   $result=$conn->query($sql);
+   $data=$result->fetch_assoc();
+   $has=$data['total'];
 
-     $sql1="";
+   $sql1="";
 
      if($has>0){
       $sql1="update commands set prevcmd='". $Message."' where id='".$ChatId ."'";
@@ -107,16 +107,16 @@
      }
 
     if($conn->query($sql1)) {
-      $msg = "Please enter a amount you want to invest ";
+      $msg = "Please enter a amount you want to invest.";
       inviaMessaggio($ChatId, $msg);
-   } else{
+   } else {
     $msg = "⚠️ Some error occured, Please try again after 10 second";
     inviaMessaggio($ChatId, $msg);
    } 
 
       
           //someaction
-      }else{
+      } else {
           $msg = "⚠️ Unknow Command";
           inviaMessaggio($ChatId, $msg);
       }
