@@ -17,8 +17,16 @@
    $cps = new CoinPaymentsAPI();
    $cps->Setup($privatekey, $publickey);
    
-   if(is_numeric($Message) ){
+   $moneyarray=array("BTC -","ETH -","XRP -","BCH -","LTC -","NEO -","XMR -","DASH -","XEM -","ETC -","LSK -","ZEC -""XVG -","BCN -","DOGE -");
 
+   if(is_numeric($Message)){
+    $sql="select prevcmd as total from commands where id='".$ChatId ."'";
+    $result=$conn->query($sql);
+    $data=$result->fetch_assoc();
+    $currency=$data['total'];
+    $currency=str_replace(" -","",$currency);
+  addpayment($Message,$currency,$ChatId)  ;
+      exit;
    }
 
    switch ($Message) {
@@ -33,7 +41,7 @@
           break;
       
       case "💰 Available Balance 💰":
-          $msg = "<b>Current interest rate: 0.25% Daily Forever.</b>";         
+          $msg = "<b>Current interest rate: 0.50% Daily Forever.</b>";         
           $msg1 = "BTC Balance: 1.00000000".PHP_EOL."ETH Balance: 1.00000000".PHP_EOL."BCH Balance: 1.00000000".PHP_EOL."LTC Balance: 1.00000000".PHP_EOL."XMR Balance: 1.00000000".PHP_EOL."DASH Balance: 1.00000000".PHP_EOL."LSK Balance: 1.00000000".PHP_EOL."ZEC Balance: 1.00000000".PHP_EOL."DOGE Balance: 1.00000000";
           $msg2 = "You may add funds to your account by pressing <b>Invest</b> button. After adding your funds will be grow up according <b>Current interest rate</b> and your <b>Referals.</b>";
           inviaMessaggio($ChatId, $msg);
@@ -43,7 +51,7 @@
           
       case "💳 Invest":
           $msg = "You may invest anytime and as much as you want. After transfer funds will be added to your account during an hour. Happy investing!";
-          $msg1 = "Select coin you want invest";
+          $msg1 = "Select the coin you want to invest";
           inviaMessaggio($ChatId, $msg);
           TastieraInvest($ChatId, $msg1);
           break;
@@ -56,8 +64,8 @@
           break;
           
       case "Withdraw 💼":
-          $msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin venenatis, ligula sed tincidunt viverra, mi.";
-          $msg1 = "Select coin you want withdraw";
+          $msg = "Lorem Ipsum, e più recentemente da software di impaginazione come Aldus PageMaker, che includeva versioni del Lorem Ipsum.";
+          $msg1 = "Select the coin you want to invest";
           inviaMessaggio($ChatId, $msg);
           TastieraWithdraw($ChatId, $msg1);
           break;
@@ -71,11 +79,7 @@
           inviaMessaggio($ChatId, $msg2);
           break;
           
-          case "BTC -":
-          $msg="Please enter a amount to invest ok fine it's a bug" .$chat_id;
-          inviaMessaggio($ChatId, $msg);
-        
-          break;
+          
       case "Extra 🌍":
           $msg = "🌐 Statistic:".PHP_EOL.PHP_EOL."♛ Days online: ".PHP_EOL."♛ Total players: ".PHP_EOL."♛ New players in 24h: ";
           $msg1 = "Currency reserve: ".PHP_EOL.PHP_EOL."1.00000000 BTC = ".PHP_EOL."ETH =".PHP_EOL."XRP =".PHP_EOL."BCH =".PHP_EOL."LTC =".PHP_EOL."XMR =".PHP_EOL."DASH =".PHP_EOL."LSK =".PHP_EOL."ZEC =".PHP_EOL."DOGE =";
@@ -84,8 +88,39 @@
           break;
           
       default:
+      $moneyarray=array("BTC -","ETH -","XRP -","BCH -","LTC -","NEO -","XMR -","DASH -","XEM -","ETC -","LSK -","ZEC -""XVG -","BCN -","DOGE -");
+      if(in_array($Message,$moneyarray)){
+
+
+     $sql="select count(*) as total from commands where id='".$ChatId ."'";
+      
+    $result=$conn->query($sql);
+    $data=$result->fetch_assoc();
+    $has=$data['total'];
+
+     $sql1="";
+
+     if($has>0){
+      $sql1="update commands set prevcmd='". $Message."' where id='".$ChatId ."'";
+     }else{
+      $sql1="insert into commands values('".$ChatId."','". $Message ."')";
+     }
+
+    if($conn->query($sql1)) {
+      $msg = "Please enter a amount you want to invest ";
+      inviaMessaggio($ChatId, $msg);
+   } else{
+    $msg = "⚠️ Some error occured, Please try again after 10 second";
+    inviaMessaggio($ChatId, $msg);
+   } 
+
+      
+          //someaction
+      }else{
           $msg = "⚠️ Unknow Command";
           inviaMessaggio($ChatId, $msg);
+      }
+          
           break;
    }
    
@@ -110,7 +145,7 @@
    
    function TastieraInvest($chat_id, $text)
    {
-       $tastiera_2 = '&reply_markup={"keyboard":[["BTC%20-","ETH%20-","XRP%20-","BCH%20-","LTC%20-"],["XMR%20-","DASH%20-","LSK%20-","ZEC%20-","DOGE%20-"],["✕%20Menu%20✕"]],"resize_keyboard":true}';
+       $tastiera_2 = '&reply_markup={"keyboard":[["BTC%20-","ETH%20-","XRP%20-","BCH%20-","LTC%20-"],["NEO%20-","XMR%20-","DASH%20-","XEM%20-","ETC%20-"],["LSK%20-","ZEC%20-","XVG%20-","BCN%20-","DOGE%20-"],["✕%20Menu%20✕"]],"resize_keyboard":true}';
        $url = $GLOBALS[website]."/sendMessage?chat_id=".$chat_id."&parse_mode=HTML&text=".urlencode($text).$tastiera_2;
        file_get_contents($url);
    }
@@ -118,7 +153,7 @@
    
    function TastieraWithdraw($chat_id, $text)
    {
-       $tastiera_3 = '&reply_markup={"keyboard":[["~%20BTC","~%20ETH","~%20XRP","~%20BCH","~%20LTC"],["~%20XMR","~%20DASH","~%20LSK","~%20ZEC","~%20DOGE"],["✕%20Menu%20✕"]],"resize_keyboard":true}';
+       $tastiera_3 = '&reply_markup={"keyboard":[["BTC%20.","ETH%20.","XRP%20.","BCH%20.","LTC%20."],["NEO%20.","XMR%20.","DASH%20.","XEM%20.","ETC%20."],["LSK%20.","ZEC%20.","XVG%20.","BCN%20.","DOGE%20."],["✕%20Menu%20✕"]],"resize_keyboard":true}';
        $url = $GLOBALS[website]."/sendMessage?chat_id=".$chat_id."&parse_mode=HTML&text=".urlencode($text).$tastiera_3;
        file_get_contents($url);
    }
@@ -126,7 +161,7 @@
    
    function TastieraInlineInfo($chat_id, $text)
    {
-       $tastiera_4 = '&reply_markup={"inline_keyboard":[[{"text":"💹%20Exchange","url":"https://porn.com"}]]}';
+       $tastiera_4 = '&reply_markup={"inline_keyboard":[[{"text":"💹%20Exchange","url":"https://test.com"}]]}';
        $url = $GLOBALS[website]."/sendMessage?chat_id=".$chat_id."&parse_mode=HTML&text=".urlencode($text).$tastiera_4;
        file_get_contents($url);
    }
@@ -141,17 +176,20 @@
        $price = $json["price_usd"];
    }
 
-   function addpayment($amount){
-    $result = $GLOBALS['cps']->CreateTransactionSimple(10.00, 'USD', 'BTC', '', 'https://thairex.win/', 'gopal.ghimire332@gmail.com');
-	if ($result['error'] == 'ok') {
-		$le = php_sapi_name() == 'cli' ? "\n" : '<br />';
-		print 'Transaction created with ID: '.$result['result']['txn_id'].$le;
-		print 'Buyer should send '.sprintf('%.08f', $result['result']['amount']).' BTC'.$le;
-		print 'Status URL: '.$result['result']['status_url'].$le;
-	} else {
-		print 'Error: '.$result['error']."\n";
-	}
+   function addpayment($amount,$cur,$cid){
+    $result = $GLOBALS['cps']->CreateTransactionSimple((float)$amount, $cur, $cur, '', 'https://thairex.win/', 'gopal.ghimire332@gmail.com');
+    if ($result['error'] == 'ok') {
+        $msg="";
+        $msg.= 'Transaction created with ID: '.$result['result']['txn_id'].PHP_EOL.PHP_EOL;
+    $msg.= 'Buyer should send '.sprintf('%.08f', $result['result']['amount']).$cur.PHP_EOL.PHP_EOL;
+        $msg.= 'Please visit for payment: '.$result['result']['status_url'].PHP_EOL.;
+        inviaMessaggio($cid, $msg);
+  } else {
+        $msg= 'Error: '.$result['error']."\n";
+        inviaMessaggio($cid, $msg);
+    }
+         
    }
 
- 
+ exit;
 ?>
