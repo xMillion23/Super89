@@ -18,7 +18,7 @@
    $cps = new CoinPaymentsAPI();
    $cps->Setup($privatekey, $publickey);
    
-   $moneyarray=array("BTC-","ETH-","XRP-","BCH-","LTC-","NEO-","XMR-","DASH-","XEM-","ETC-","LSK-","ZEC-""XVG-","BCN-","DOGE-");
+   $moneyarray=array("BTC-","ETH-","XRP-","BCH-","LTC-","NEO-","XMR-","DASH-","XEM-","ETC-","LSK-","ZEC-","XVG-","BCN-","DOGE-");
       if(is_numeric($Message)){
           $sql="select prevcmd as total from commands where id='".$ChatId."'";
           $result=$conn->query($sql);
@@ -88,7 +88,7 @@
           break;
           
       default:
-          $moneyarray=array("BTC-","ETH-","XRP-","BCH-","LTC-","NEO-","XMR-","DASH-","XEM-","ETC-","LSK-","ZEC-""XVG-","BCN-","DOGE-");
+          $moneyarray=array("BTC-","ETH-","XRP-","BCH-","LTC-","NEO-","XMR-","DASH-","XEM-","ETC-","LSK-","ZEC-","XVG-","BCN-","DOGE-");
       if(in_array($Message,$moneyarray)){
    $sql="select count(*) as total from commands where id='".$ChatId ."'";
       
@@ -178,7 +178,7 @@
         $msg = "";
         $msg.= '<b>Transaction created with ID:</b>'.$result['result']['txn_id'].PHP_EOL.PHP_EOL;
         $msg.= '<b>Amount to invest:</b>'.sprintf('%.08f', $result['result']['amount']).$cur.PHP_EOL.PHP_EOL;
-        $msg.= 'Please visit for payment:'.$result['result']['status_url'].PHP_EOL.;
+        $msg.= 'Please visit for payment:'.$result['result']['status_url'];
         inviaMessaggio($cid, $msg);
       }else{
         $msg= 'Error:'.$result['error']."\n";
